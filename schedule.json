@@ -1,0 +1,197 @@
+{
+  "aliases": {
+    "НВиТП": "Начальная военная подготовка"
+  },
+  "days": {
+    "Понедельник": [
+      {
+        "number": 1,
+        "alternatives": [
+          {
+            "subject": "Биология",
+            "teacher": "Э́уелбаева А."
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "alternatives": [
+          {
+            "subject": "Русский язык",
+            "teacher": "Турарбекова А."
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "alternatives": [
+          {
+            "subject": "Информатика",
+            "teacher": "Вакант, Узбанова А."
+          }
+        ]
+      }
+    ],
+    "Вторник": [
+      {
+        "number": 1,
+        "alternatives": [
+          {
+            "subject": "Русская литература",
+            "teacher": "Жанбырбаева Н."
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "alternatives": [
+          {
+            "subject": "Иностранный язык",
+            "teacher": "Рымтаева А. / Бакаева. Г"
+          },
+          {
+            "subject": "Биология",
+            "teacher": "Э́уелбаева А."
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "alternatives": [
+          {
+            "subject": "Физика",
+            "teacher": "Агибаева Э."
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "alternatives": [
+          {
+            "subject": "География",
+            "teacher": "Алибаева Л."
+          }
+        ]
+      }
+    ],
+    "Среда": [
+      {
+        "number": 1,
+        "alternatives": [
+          {
+            "subject": "Химия",
+            "teacher": ""
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "alternatives": [
+          {
+            "subject": "Иностранный язык",
+            "teacher": "Рымтаева А. / Бакаева. Г"
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "alternatives": [
+          {
+            "subject": "История Казахстана",
+            "teacher": "Галиева Н."
+          },
+          {
+            "subject": "Математика",
+            "teacher": "Нургалиева А."
+          }
+        ]
+      }
+    ],
+    "Четверг": [
+      {
+        "number": 1,
+        "alternatives": [
+          {
+            "subject": "Всемирная история",
+            "teacher": "Галиева Н."
+          },
+          {
+            "subject": "Графика и проектирование",
+            "teacher": "Вакант 1"
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "alternatives": [
+          {
+            "subject": "Физическая культура",
+            "teacher": "Ахмет Ж. / Байдильданов Е."
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "alternatives": [
+          {
+            "subject": "Казахский язык и литература",
+            "teacher": "Аидасова Г. / Садвакасова М."
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "alternatives": [
+          {
+            "subject": "Математика",
+            "teacher": "Нургалиева А."
+          }
+        ]
+      }
+    ],
+    "Пятница": [
+      {
+        "number": 1,
+        "alternatives": [
+          {
+            "subject": "Физическая культура",
+            "teacher": "Ахмет Ж. / Байдильданов Е."
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "alternatives": [
+          {
+            "subject": "Всемирная история",
+            "teacher": "Галиева Н."
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "alternatives": [
+          {
+            "subject": "Русская литература",
+            "teacher": "Жанбырбаева Н."
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "alternatives": [
+          {
+            "subject": "НВиТП",
+            "teacher": "Арстанов М."
+          }
+        ]
+      }
+    ]
+  },
+  "bells": {
+    "1": "8:00-9:35",
+    "2": "9:45-11:20",
+    "3": "11:40-13:15",
+    "4": "13:30-15:05"
+  }
+}
