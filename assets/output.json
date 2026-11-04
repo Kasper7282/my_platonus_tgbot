@@ -1,0 +1,53 @@
+{
+    "Monday": [
+        {
+            "number": 1,
+            "subject": "матем.",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "информатика",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "русский",
+            "homework": ""
+        }
+    ],
+    "Tuesday": [
+        {
+            "number": 1,
+            "subject": "русский",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "казахский",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "англ.яз",
+            "homework": ""
+        }
+    ],
+    "Wednesday": [
+        {
+            "number": 1,
+            "subject": "НВП",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "Физра",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "ист.Каз",
+            "homework": ""
+        }
+    ]
+}

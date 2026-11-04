@@ -1,0 +1,222 @@
+{
+    "Monday": [
+        {
+            "number": 1,
+            "subject": "Русский язык",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "Русский язык",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "Математика",
+            "homework": ""
+        },
+        {
+            "number": 4,
+            "subject": "Математика",
+            "homework": ""
+        },
+        {
+            "number": 5,
+            "subject": "Информатика",
+            "homework": ""
+        },
+        {
+            "number": 6,
+            "subject": "Информатика",
+            "homework": ""
+        }
+    ],
+    "Tuesday": [
+        {
+            "number": 1,
+            "subject": "Русская литература",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "Русская литература",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "Иностранный язык",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "Биология",
+            "homework": ""
+        },
+        {
+            "number": 4,
+            "subject": "Иностранный язык",
+            "homework": ""
+        },
+        {
+            "number": 4,
+            "subject": "Биология",
+            "homework": ""
+        },
+        {
+            "number": 5,
+            "subject": "Физика",
+            "homework": ""
+        },
+        {
+            "number": 6,
+            "subject": "Физика",
+            "homework": ""
+        },
+        {
+            "number": 7,
+            "subject": "География",
+            "homework": ""
+        },
+        {
+            "number": 8,
+            "subject": "География",
+            "homework": ""
+        }
+    ],
+    "Wednesday": [
+        {
+            "number": 1,
+            "subject": "Начальная военная и технологическая подготовка",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "Начальная военная и технологическая подготовка",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "Иностранный язык",
+            "homework": ""
+        },
+        {
+            "number": 4,
+            "subject": "Иностранный язык",
+            "homework": ""
+        },
+        {
+            "number": 5,
+            "subject": "История Казахстана",
+            "homework": ""
+        },
+        {
+            "number": 5,
+            "subject": "Математика",
+            "homework": ""
+        },
+        {
+            "number": 6,
+            "subject": "История Казахстана",
+            "homework": ""
+        },
+        {
+            "number": 6,
+            "subject": "Математика",
+            "homework": ""
+        }
+    ],
+    "Thursday": [
+        {
+            "number": 1,
+            "subject": "Всемирная история",
+            "homework": ""
+        },
+        {
+            "number": 1,
+            "subject": "Графика и проектирование",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "Всемирная история",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "Графика и проектирование",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "Физическая культура",
+            "homework": ""
+        },
+        {
+            "number": 4,
+            "subject": "Физическая культура",
+            "homework": ""
+        },
+        {
+            "number": 5,
+            "subject": "Казахский язык и литература",
+            "homework": ""
+        },
+        {
+            "number": 6,
+            "subject": "Казахский язык и литература",
+            "homework": ""
+        },
+        {
+            "number": 7,
+            "subject": "Биология",
+            "homework": ""
+        },
+        {
+            "number": 8,
+            "subject": "Биология",
+            "homework": ""
+        }
+    ],
+    "Friday": [
+        {
+            "number": 1,
+            "subject": "Физическая культура",
+            "homework": ""
+        },
+        {
+            "number": 2,
+            "subject": "Физическая культура",
+            "homework": ""
+        },
+        {
+            "number": 3,
+            "subject": "Всемирная история",
+            "homework": ""
+        },
+        {
+            "number": 4,
+            "subject": "Всемирная история",
+            "homework": ""
+        },
+        {
+            "number": 5,
+            "subject": "Русская литература",
+            "homework": ""
+        },
+        {
+            "number": 6,
+            "subject": "Русская литература",
+            "homework": ""
+        },
+        {
+            "number": 7,
+            "subject": "Химия",
+            "homework": ""
+        },
+        {
+            "number": 8,
+            "subject": "Химия",
+            "homework": ""
+        }
+    ]
+}
