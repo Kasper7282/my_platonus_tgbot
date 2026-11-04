@@ -3,6 +3,7 @@ import json
 
 from google import genai
 from google.genai import types
+
 from dotenv import load_dotenv
 from openrouter import OpenRouter
 
@@ -54,7 +55,28 @@ def send_prompt(prompt: str, json_list: list) -> str:
 #     incoming_file_bytes = f.read()
 
 # data = recognize_image(incoming_file_bytes)
-send_prompt(1, 1)
+# with open("homework.json", "w") as f:
+#         json.dump(a, f, indent=4)
+def getHomework():
+    with open("homework.json", "r") as f:
+            return json.load(f)
 
+def setHomework(date:int, pair:int, homework:string):
+     dnp = f"{date}:{pair}"
+     print(dnp)
+     dict = getHomework()
+     dict[dnp] = homework
+     print(type(dnp))
+     with open ("homework.json", "w") as f:
+          return json.dump(dict, f, indent=4)
+
+
+setHomework(0, 1, "test3")     
+sliced = {k: v for i, (k, v) in enumerate(getHomework().items()) if 0 <= i < 5}
+
+print(sliced) 
+# for i in range(6):
+#     for j in range (6):
+#         print(f'"{i}:{j}":"n{j}", ', end='')
 # with open("output.json", "w", encoding="utf-8") as file:
 #     json.dump(json.loads(data), file, indent=4, ensure_ascii=False)
