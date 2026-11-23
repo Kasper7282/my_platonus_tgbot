@@ -297,38 +297,71 @@ def format_grades(data) -> str:
             continue
         rows.append((sub, avg))
 
-    # от высокого к низкому; предметы без данных уходят вниз
+    # От высокого к низкому; предметы без данных уходят вниз.
     rows.sort(key=lambda r: (r[1] is None, -(r[1] or 0)))
 
     if not rows:
         return "Нет предметов с оценками выше нуля."
 
     with_teachers = show_teachers()
-    sections = {
-        "🟢 Отлично · 90+": [],
-        "🟠 Хорошо · 80–89.9": [],
-        "🔴 Нужно подтянуть · 70–79.9": [],
-        "⚪ Ниже 70 / нет оценки": [],
-    }
+    previous = load_last_grades()
+    lines = []
+    last_color = None
     for sub, avg in rows:
-        name = html.escape(str(sub.get("subjectName", "?")))
+        subject_name = str(sub.get("subjectName", "?"))
+        name = html.escape(subject_name)
         avg_text = f"{avg:.1f}" if avg is not None else "нет данных"
+        old_avg = previous.get(subject_name)
+        if avg is not None and old_avg is not None:
+            delta = round(avg - float(old_avg), 1)
+            if delta:
+                avg_text += f" ({delta:+.1f})"
         emoji = mark_emoji(avg)
+        if last_color is not None and emoji != last_color:
+            lines.append("")
+        last_color = emoji
         who = f" <i>· {html.escape(str(sub.get('tutorList', '?')))}</i>" if with_teachers else ""
-        line = f"{emoji}  <b>{name}</b>{who}  <code>{avg_text}</code>"
-        if avg is None or avg < 70:
-            section = "⚪ Ниже 70 / нет оценки"
-        elif avg < 80:
-            section = "🔴 Нужно подтянуть · 70–79.9"
-        elif avg < 90:
-            section = "🟠 Хорошо · 80–89.9"
-        else:
-            section = "🟢 Отлично · 90+"
-        sections[section].append(line)
+        lines.append(f"{emoji}  <b>{name}</b>{who}  <code>{avg_text}</code>")
 
-    blocks = ["<b>📊 СРЕДНИЙ БАЛЛ</b>"]
-    blocks.extend(f"<b>{title}</b>\n" + "\n".join(lines) for title, lines in sections.items() if lines)
-    return "\n\n".join(blocks)
+    return "<b>📊 СРЕДНИЙ БАЛЛ</b>\n" + "\n".join(lines)
+
+
+def get_last_grades_rows(data) -> list[tuple[dict, float | None]]:
+    """Возвращает отсортированные предметы и средние баллы."""
+    rows = []
+    for sub in find_subjects(data):
+        avg = average_of(sub)
+        if avg == 0:
+            continue
+        rows.append((sub, avg))
+    rows.sort(key=lambda r: (r[1] is None, -(r[1] or 0)))
+    return rows
+
+
+def load_last_grades() -> dict[str, float | None]:
+    """Загружает предыдущие средние баллы по названиям предметов."""
+    try:
+        with open("last_grades.json", encoding="utf-8") as f:
+            previous_rows = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    try:
+        return {row["subject"]: row.get("average") for row in previous_rows}
+    except (TypeError, KeyError):
+        return {}
+
+
+def save_last_grades(data) -> None:
+    """Сохраняет названия предметов и средние баллы в компактный JSON."""
+    rows = get_last_grades_rows(data)
+
+    with open("last_grades.json", "w", encoding="utf-8") as f:
+        json.dump(
+            [{"subject": sub.get("subjectName", "?"), "average": avg} for sub, avg in rows],
+            f,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
 
 
 # [SCHEDULE: CONFIG] Временная зона, JSON-файл и соответствие имени дня индексу.
@@ -465,11 +498,14 @@ async def grades_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "/grades 2026 1 - оценки за другой семестр"
         )
         return
+    grades_data = None
     try:
         data = await asyncio.to_thread(platonus.journal, year, term)
         lookup = build_lookup(data)
         if weekday is None:
-            text = format_grades(data) + "\n\n" + format_today(lookup)
+            grades_data = data
+            text = format_grades(data)
+            text += "\n\n" + format_today(lookup)
         elif weekday > 4:
             text = "В выходной пар нет."
         else:
@@ -480,6 +516,8 @@ async def grades_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # лимит Telegram - 4096 символов на сообщение
     for i in range(0, len(text), 4000):
             await update.message.reply_text(text[i:i + 4000], parse_mode="HTML")
+    if grades_data is not None:
+        await asyncio.to_thread(save_last_grades, grades_data)
 
 
 async def relogin_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
