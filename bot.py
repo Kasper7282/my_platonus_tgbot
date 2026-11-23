@@ -46,11 +46,21 @@ def required_env(name: str) -> str:
 BOT_TOKEN = required_env("BOT_TOKEN")
 PLATONUS_LOGIN = required_env("PLATONUS_LOGIN")
 PLATONUS_PASSWORD = required_env("PLATONUS_PASSWORD")
-# Telegram ID владельца. Бот отвечает только ему, иначе любой найдёт бота и увидит ваши оценки.
+# Telegram ID пользователей, которым разрешён доступ к боту.
+_allowed_user_ids = os.environ.get("ALLOWED_USER_IDS", "").strip()
+if not _allowed_user_ids:
+    # Поддерживаем старое имя переменной для совместимости.
+    _allowed_user_ids = required_env("ALLOWED_USER_ID")
 try:
-    ALLOWED_USER_ID = int(required_env("ALLOWED_USER_ID"))
+    ALLOWED_USER_IDS = {
+        int(user_id.strip())
+        for user_id in _allowed_user_ids.split(",")
+        if user_id.strip()
+    }
+    if not ALLOWED_USER_IDS:
+        raise ValueError("список пуст")
 except ValueError as e:
-    raise RuntimeError("ALLOWED_USER_ID должен быть целым числом.") from e
+    raise RuntimeError("ALLOWED_USER_IDS должен содержать ID через запятую.") from e
 DEFAULT_YEAR = os.environ.get("PLATONUS_YEAR", "2026")
 DEFAULT_TERM = os.environ.get("PLATONUS_TERM", "1")
 
@@ -476,8 +486,8 @@ platonus = Platonus(PLATONUS_LOGIN, PLATONUS_PASSWORD)
 
 
 def allowed(update: Update) -> bool:
-    """Разрешает команду только Telegram-пользователю из ALLOWED_USER_ID."""
-    return update.effective_user is not None and update.effective_user.id == ALLOWED_USER_ID
+    """Разрешает команду только Telegram-пользователям из ALLOWED_USER_IDS."""
+    return update.effective_user is not None and update.effective_user.id in ALLOWED_USER_IDS
 
 
 async def grades_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -595,12 +605,13 @@ async def send_lesson_notification(bot_client, number: int, alternatives: list, 
                 lines.append(f"{mark_emoji(float(item['mark']) if item['mark'] is not None else None)} <b>{html.escape(name)}</b>: <code>{score}</code>")
         else:
             lines.append(f"⚪ <b>{html.escape(name)}</b>: оценки за сегодня нет")
-    await with_network_retries(
-        lambda: bot_client.send_message(
-            chat_id=ALLOWED_USER_ID, text="\n".join(lines), parse_mode="HTML"
-        ),
-        "отправка уведомления в Telegram",
-    )
+    for user_id in ALLOWED_USER_IDS:
+        await with_network_retries(
+            lambda user_id=user_id: bot_client.send_message(
+                chat_id=user_id, text="\n".join(lines), parse_mode="HTML"
+            ),
+            "отправка уведомления в Telegram",
+        )
 
 
 async def schedule_notifications(application: Application) -> None:
