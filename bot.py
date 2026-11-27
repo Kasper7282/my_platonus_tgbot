@@ -148,8 +148,18 @@ class Platonus:
                 return self._fetch_journal(year, term)
             except SessionExpired as e:
                 log.warning("Сессия слетела (%s), перелогиниваюсь", e)
+                self.person_id = None
                 self.authorize()
-                return self._fetch_journal(year, term)  # вторая попытка, без цикла
+                try:
+                    return self._fetch_journal(year, term)
+                except SessionExpired as retry_error:
+                    # Не оставляем в клиенте сессию, которую сервер уже отверг.
+                    self.person_id = None
+                    log.error("Platonus повторно вернул %s после новой авторизации", retry_error)
+                    raise RuntimeError(
+                        "Platonus отклонил запрос журнала даже после повторного входа (HTTP 403). "
+                        "Проверьте доступ к журналу и семестр."
+                    ) from retry_error
 
     def marks_for_date(self, year: str, term: str, target_date, subject_names=None):
         """Собирает записи за дату; при subject_names запрашивает только эти предметы."""
@@ -294,6 +304,38 @@ def mark_emoji(avg: float | None) -> str:
     return "🟢"
 
 
+def estimate_gpa(rows: list[tuple[dict, float | None]]) -> float | None:
+    """Считает приблизительный GPA по четырёхбалльной шкале из средних предметов."""
+    points = []
+    for _subject, average in rows:
+        if average is None:
+            continue
+        score = average
+        if score >= 95:
+            points.append(4.0)
+        elif score >= 90:
+            points.append(3.67)
+        elif score >= 85:
+            points.append(3.33)
+        elif score >= 80:
+            points.append(3.0)
+        elif score >= 75:
+            points.append(2.67)
+        elif score >= 70:
+            points.append(2.33)
+        elif score >= 65:
+            points.append(2.0)
+        elif score >= 60:
+            points.append(1.67)
+        elif score >= 55:
+            points.append(1.33)
+        elif score >= 50:
+            points.append(1.0)
+        else:
+            points.append(0.0)
+    return round(sum(points) / len(points), 2) if points else None
+
+
 def format_grades(data) -> str:
     """Собирает общий список предметов, сортирует по баллу и добавляет цвета."""
     subjects = find_subjects(data)
@@ -315,6 +357,13 @@ def format_grades(data) -> str:
 
     with_teachers = show_teachers()
     previous = load_last_grades()
+    gpa = estimate_gpa(rows)
+    old_gpa = previous.get("__gpa__")
+    gpa_text = f"{gpa:.2f} / 4.00" if gpa is not None else "нет данных"
+    if gpa is not None and old_gpa is not None:
+        delta = round(gpa - float(old_gpa), 2)
+        if delta:
+            gpa_text += f" ({delta:+.2f})"
     lines = []
     last_color = None
     for sub, avg in rows:
@@ -333,7 +382,7 @@ def format_grades(data) -> str:
         who = f" <i>· {html.escape(str(sub.get('tutorList', '?')))}</i>" if with_teachers else ""
         lines.append(f"{emoji}  <b>{name}</b>{who}  <code>{avg_text}</code>")
 
-    return "<b>📊 СРЕДНИЙ БАЛЛ</b>\n" + "\n".join(lines)
+    return f"<b>📊 СРЕДНИЙ БАЛЛ</b>\n<i>Ориентировочный GPA: <code>{gpa_text}</code></i>\n\n" + "\n".join(lines)
 
 
 def get_last_grades_rows(data) -> list[tuple[dict, float | None]]:
@@ -349,25 +398,38 @@ def get_last_grades_rows(data) -> list[tuple[dict, float | None]]:
 
 
 def load_last_grades() -> dict[str, float | None]:
-    """Загружает предыдущие средние баллы по названиям предметов."""
+    """Загружает предыдущие средние баллы и GPA; принимает старый формат списка."""
     try:
         with open("last_grades.json", encoding="utf-8") as f:
             previous_rows = json.load(f)
     except (OSError, ValueError):
         return {}
     try:
+        if isinstance(previous_rows, dict):
+            result = {
+                row["subject"]: row.get("average")
+                for row in previous_rows.get("subjects", [])
+            }
+            result["__gpa__"] = previous_rows.get("gpa")
+            return result
         return {row["subject"]: row.get("average") for row in previous_rows}
-    except (TypeError, KeyError):
+    except (TypeError, KeyError, AttributeError):
         return {}
 
 
 def save_last_grades(data) -> None:
-    """Сохраняет названия предметов и средние баллы в компактный JSON."""
+    """Сохраняет названия предметов, средние баллы и ориентировочный GPA."""
     rows = get_last_grades_rows(data)
 
     with open("last_grades.json", "w", encoding="utf-8") as f:
         json.dump(
-            [{"subject": sub.get("subjectName", "?"), "average": avg} for sub, avg in rows],
+            {
+                "subjects": [
+                    {"subject": sub.get("subjectName", "?"), "average": avg}
+                    for sub, avg in rows
+                ],
+                "gpa": estimate_gpa(rows),
+            },
             f,
             ensure_ascii=False,
             separators=(",", ":"),
